@@ -1,0 +1,26 @@
+version: '2' # Versi sintaks docker-compose yang digunakan.
+
+services:
+  # Mendefinisikan setiap kontainer yang akan dijalankan.
+
+  item-db:
+    # Nama layanan untuk basis data.
+    image: mongo:3 # Menggunakan image MongoDB versi 3.
+    volumes:
+      # Mengikat volume ke kontainer.
+      - app-db:/data/db # Mengikat volume bernama "app-db" ke direktori /data/db di kontainer. Ini adalah lokasi tempat MongoDB menyimpan datanya.
+    restart: always # Menerapkan restart policy agar container selalu restart ketika terhenti
+  item-app:
+    # Nama layanan untuk aplikasi item.
+    image: andhikapepe/item-app:v1 # Menggunakan custom image dari Docker Hub yang telah di buat dan unggah.
+    ports:
+      # Pemetaan port antara host dan kontainer.
+      - "80:8080" # Port 80 di host diarahkan ke port 8080 di kontainer.
+    depends_on:
+      # Menentukan urutan dimana layanan harus dijalankan.
+      - item-db # Layanan item-app akan menunggu sampai item-db dijalankan sebelum mulai.
+    # Menerapkan restart policy agar container selalu restart ketika terhenti
+    restart: always
+volumes:
+  # Mendefinisikan volume yang akan digunakan.
+  app-db: # Membuat volume bernama "app-db". Ini akan digunakan oleh layanan item-db.
